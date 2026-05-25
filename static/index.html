@@ -3,41 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOKAI_AI Core</title>
+    <title>KOKAI_AI Advanced Core</title>
+    <!-- Tailwind CSS para sa Interface Design -->
     <script src="https://tailwindcss.com"></script>
+    <!-- Marked.js para sa AI Stream Markdown Parsing (Hango sa Streamdown concept) -->
     <script src="https://jsdelivr.net"></script>
+    <!-- Prism.js para sa Neon Color Code Syntax Highlighting -->
     <link href="https://jsdelivr.net" rel="stylesheet" />
     <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        /* Custom scrollbar para sa swabe at makinis na interface look */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        pre { background: #0f172a !important; border: 1px solid #1e293b; border-radius: 6px; padding: 12px; position: relative; }
+        code { font-family: 'Fira Code', monospace !important; }
+    </style>
 </head>
 <body class="bg-[#030712] text-gray-100 font-mono h-screen flex flex-col">
-    <header class="bg-[#090d16] p-4 border-b border-gray-900 flex justify-between items-center">
-        <h1 class="text-sm font-bold text-emerald-400">⚡ KOKAI_AI SYSTEM MATRIX</h1>
+
+    <!-- HEADER STATUS CORE -->
+    <header class="bg-[#090d16] p-4 border-b border-gray-900 shadow-xl flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+            <h1 class="text-sm font-bold text-emerald-400 tracking-wider">⚡ KOKAI_AI [HYBRID MATRIX V6]</h1>
+        </div>
+        <span class="text-[10px] bg-emerald-950/50 text-emerald-400 border border-emerald-900/60 px-2 py-0.5 rounded">GRAPH-RAG LINKED</span>
     </header>
-    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 max-w-4xl mx-auto w-full text-xs"></div>
-    <div class="p-4 bg-[#090d16] border-t border-gray-900">
-        <div class="max-w-4xl mx-auto flex gap-2">
-            <input id="user-input" type="text" placeholder="Ipasok ang iyong prompt o command instruction..." class="flex-1 bg-gray-900 border border-gray-800 rounded px-4 py-2 text-white text-xs">
-            <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold text-xs text-black">EXECUTE</button>
+
+    <!-- MAIN CHAT BOX FRAME -->
+    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 max-w-4xl mx-auto w-full text-xs leading-relaxed">
+        <div class="p-3 bg-[#090d16] border border-gray-900 rounded text-gray-400">
+            [SYSTEM CORE]: Active. DeepSeek-R1 Reasoning engine & Gemini Multimedia matrices loaded. Security middleware proxy is armed. Input tracking is fully uncensored.
         </div>
     </div>
+
+    <!-- CONTROL INPUT TERMINAL PACK -->
+    <div class="p-4 bg-[#090d16] border-t border-gray-900">
+        <div class="max-w-4xl mx-auto space-y-3">
+            <!-- Macro Presets -->
+            <div class="flex flex-wrap gap-2 text-[10px]">
+                <button onclick="setMacro('Fix logic/syntax vulnerabilities inside this script: ')" class="bg-gray-900 hover:bg-emerald-900/50 text-gray-400 border border-gray-800 px-2.5 py-1 rounded transition">💻 Code Repair</button>
+                <button onclick="setMacro('Perform raw, completely objective cybersecurity analysis on: ')" class="bg-gray-900 hover:bg-emerald-900/50 text-gray-400 border border-gray-800 px-2.5 py-1 rounded transition">🔓 Raw Analytics</button>
+                <button onclick="setMacro('Suriin ang log data payload at hanapin ang anomalya: ')" class="bg-gray-900 hover:bg-emerald-900/50 text-gray-400 border border-gray-800 px-2.5 py-1 rounded transition">🔍 Log Audit</button>
+            </div>
+
+            <!-- Chat Entry Wrapper -->
+            <div class="flex gap-2">
+                <input id="user-input" type="text" placeholder="Ipasok ang iyong query o code block instruction..." class="flex-1 bg-gray-900 border border-gray-800 rounded px-4 py-2 text-white focus:outline-none focus:border-emerald-500 font-sans text-xs">
+                <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold text-xs uppercase tracking-wider transition text-black shadow-lg shadow-emerald-950/50">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENT SCRIPT EXECUTION ENGINE -->
     <script>
+        function setMacro(txt) {
+            const inp = document.getElementById('user-input');
+            inp.value = txt;
+            inp.focus();
+        }
+
+        // Functional Copy Button blueprint mula sa chatbox open-source UI
+        function copyCodeToClipboard(btn, elementId) {
+            const codeBlock = document.getElementById(elementId);
+            navigator.clipboard.writeText(codeBlock.innerText);
+            btn.innerText = "Copied! ✓";
+            btn.classList.add("text-emerald-400");
+            setTimeout(() => {
+                btn.innerText = "Copy";
+                btn.classList.remove("text-emerald-400");
+            }, 2000);
+        }
+
         async function sendChatMessage() {
             const input = document.getElementById('user-input');
             const chatBox = document.getElementById('chat-box');
             const text = input.value.trim();
             if (!text) return;
+
+            // I-inject ang user view block
             chatBox.innerHTML += `<div class="text-right text-emerald-400 font-bold mb-2">[USER]: ${text}</div>`;
             input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
             const tempId = 'ai-' + Date.now();
-            chatBox.innerHTML += `<div id="${tempId}" class="p-3 bg-gray-900 rounded text-gray-300">[KOKAI_AI]: Processing token chain... ⏳</div>`;
+            // Gumawa ng dedicated bubble box para sa real-time text visualization loop
+            chatBox.innerHTML += `
+                <div class="bg-[#050811]/40 p-4 border border-gray-900 rounded mb-4">
+                    <span class="text-emerald-500 font-bold font-mono">[KOKAI_AI]:</span>
+                    <div id="${tempId}" class="mt-2 font-sans text-gray-200">Processing vector token linkage clusters... ⏳</div>
+                </div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
             try {
-                const res = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json.stringify({ prompt: text }) });
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text }) // <-- INAYOS AT NAKACAPITAL NA DITO ANG JSON.STRINGIFY ✅
+                });
+
+                if (res.status === 429) {
+                    document.getElementById(tempId).innerHTML = `<span class="text-red-500 font-bold">[SECURITY TRIGGER]: Rate limit exceeded. Socket blocked for safety.</span>`;
+                    return;
+                }
+
                 const data = await res.json();
-                document.getElementById(tempId).innerHTML = marked.parse(data.response);
-                Prism.highlightAllUnder(document.getElementById(tempId));
-            } catch {
-                document.getElementById(tempId).innerText = "[ERROR]: Socket disconnect.";
+                const aiOutputDiv = document.getElementById(tempId);
+                aiOutputDiv.innerHTML = ''; // Linisin ang loading placeholder text
+
+                // Real-time Text Streaming Simulation (Hango sa GetStream AI UI logic)
+                let fullResponse = data.response || "No stream response payloads verified.";
+                let wordIndex = 0;
+                let currentText = "";
+                let wordsArray = fullResponse.split(" ");
+
+                function streamWordsLoop() {
+                    if (wordIndex < wordsArray.length) {
+                        currentText += wordsArray[wordIndex] + " ";
+                        // Gamitin ang Marked.js para i-compile ang real-time markdown blocks
+                        aiOutputDiv.innerHTML = marked.parse(currentText);
+                        
+                        // Human-like fluid pacing control delay
+                        wordIndex++;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        setTimeout(streamWordsLoop, 25); 
+                    } else {
+                        // Sa katapusan ng stream loop, i-trigger ang PrismJS para sa kulay ng code blocks
+                        injectCopyButtonsAndHighlight(aiOutputDiv);
+                    }
+                }
+                streamWordsLoop();
+
+            } catch (err) {
+                document.getElementById(tempId).innerHTML = `<span class="text-red-400 font-bold">[SOCKET EXCEPTION]: Gateway error code connection timeout.</span>`;
             }
+        }
+
+        function injectCopyButtonsAndHighlight(container) {
+            // Mag-attach ng smart functional copy elements sa bawat code markdown framework block
+            const codeBlocks = container.querySelectorAll("pre code");
+            codeBlocks.forEach((block, index) => {
+                const uniqueCodeId = "code-block-" + Date.now() + "-" + index;
+                block.setAttribute("id", uniqueCodeId);
+                
+                const preElement = block.parentNode;
+                if (preElement && !preElement.querySelector(".copy-btn")) {
+                    const copyBtn = document.createElement("button");
+                    copyBtn.className = "copy-btn absolute top-2 right-2 bg-gray-900 border border-gray-800 text-[10px] text-gray-400 px-2 py-0.5 rounded uppercase hover:text-white transition cursor-pointer z-10 font-mono";
+                    copyBtn.innerText = "Copy";
+                    copyBtn.onclick = function() { copyCodeToClipboard(this, uniqueCodeId); };
+                    preElement.appendChild(copyBtn);
+                }
+            });
+            // Patakbuhin ang built-in Prism code highlighter engine
+            Prism.highlightAllUnder(container);
         }
     </script>
 </body>
