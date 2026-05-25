@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOKAI_AI Core</title>
+    <script src="https://tailwindcss.com"></script>
+    <script src="https://jsdelivr.net"></script>
+    <link href="https://jsdelivr.net" rel="stylesheet" />
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body class="bg-[#030712] text-gray-100 font-mono h-screen flex flex-col">
+    <header class="bg-[#090d16] p-4 border-b border-gray-900 flex justify-between items-center">
+        <h1 class="text-sm font-bold text-emerald-400">⚡ KOKAI_AI SYSTEM MATRIX</h1>
+    </header>
+    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 max-w-4xl mx-auto w-full text-xs"></div>
+    <div class="p-4 bg-[#090d16] border-t border-gray-900">
+        <div class="max-w-4xl mx-auto flex gap-2">
+            <input id="user-input" type="text" placeholder="Ipasok ang iyong prompt o command instruction..." class="flex-1 bg-gray-900 border border-gray-800 rounded px-4 py-2 text-white text-xs">
+            <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold text-xs text-black">EXECUTE</button>
+        </div>
+    </div>
+    <script>
+        async function sendChatMessage() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const text = input.value.trim();
+            if (!text) return;
+            chatBox.innerHTML += `<div class="text-right text-emerald-400 font-bold mb-2">[USER]: ${text}</div>`;
+            input.value = '';
+            const tempId = 'ai-' + Date.now();
+            chatBox.innerHTML += `<div id="${tempId}" class="p-3 bg-gray-900 rounded text-gray-300">[KOKAI_AI]: Processing token chain... ⏳</div>`;
+            try {
+                const res = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json.stringify({ prompt: text }) });
+                const data = await res.json();
+                document.getElementById(tempId).innerHTML = marked.parse(data.response);
+                Prism.highlightAllUnder(document.getElementById(tempId));
+            } catch {
+                document.getElementById(tempId).innerText = "[ERROR]: Socket disconnect.";
+            }
+        }
+    </script>
+</body>
+</html>
